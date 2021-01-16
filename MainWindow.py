@@ -6,11 +6,14 @@ from PyQt5.QtWidgets import *
 
 import resources
 
+import ImageFunctions
+
 #
 # Required modules are :
 #   - PyQT5
 #   - PyQT5-stubs
 #   - PyQT5-sip
+#   - numpy
 
 
 
@@ -61,10 +64,9 @@ class MainWindow(QMainWindow):
         functionsToolBar = QToolBar("Functions", self)
         functionsToolBar.setMovable(False)
         self.addToolBar(functionsToolBar)
-        functionsToolBar.addAction(self.binarize)
-        functionsToolBar.addAction(self.binarize)
-        functionsToolBar.addAction(self.addition)
-        functionsToolBar.addAction(self.substract)
+        functionsToolBar.addAction(self.thresholdAction)
+        functionsToolBar.addAction(self.additionAction)
+        functionsToolBar.addAction(self.substractAction)
 
     def _createStatusBar(self):
         self.statusbar = self.statusBar()
@@ -91,16 +93,27 @@ class MainWindow(QMainWindow):
         self.pasteAction.setShortcut(QKeySequence.Paste)
         self.cutAction.setShortcut(QKeySequence.Cut)
 
+        #Functions Action
+        self.thresholdAction = QAction("Seuillage")
+        self.additionAction = QAction("Addition")
+        self.substractAction = QAction("Soustraction")
+
     def _connectActions(self):
         # Connect File actions
         self.openAction.triggered.connect(self.openFile)
         self.saveAction.triggered.connect(self.saveFile)
         self.saveAsAction.triggered.connect(self.saveAsFile)
         self.exitAction.triggered.connect(self.close)
+
         # Connect Edit actions
         self.copyAction.triggered.connect(self.copyContent)
         self.pasteAction.triggered.connect(self.pasteContent)
         self.cutAction.triggered.connect(self.cutContent)
+
+        # Connect Functions actions
+        self.thresholdAction.triggered.connect(self.thresholdImage)
+        self.additionAction.triggered.connect(self.additionImage)
+        self.substractAction.triggered.connect(self.substractImage)
 
     def openFile(self):
         # Get file to load
@@ -108,58 +121,58 @@ class MainWindow(QMainWindow):
         file_path = file[0]
         # create a subwindow with the image
         pixmap = QPixmap(file_path)
-        self.createMDISubWindow(pixmap, True)
+        self.createMDISubWindow(file_path, pixmap, True)
 
 
     def saveFile(self):
         # Logic for saving a file goes here...
-        self.mdi.subWindowList()[0].widget().setText("<b>File > Save</b> clicked")
+        print("TODO")
 
     def saveAsFile(self):
         # Logic for saving a file goes here...
-        self.mdi.subWindowList()[0].widget().setText("<b>File > SaveAs</b> clicked")
+        print("TODO")
 
     def copyContent(self):
         # Logic for copying content goes here...
-        self.mdi.subWindowList()[0].widget().setText("<b>Edit > Copy</b> clicked")
+        print("TODO")
 
     def pasteContent(self):
         # Logic for pasting content goes here...
-        self.mdi.subWindowList()[0].widget().setText("<b>Edit > Paste</b> clicked")
+        print("TODO")
 
     def cutContent(self):
         # Logic for cutting content goes here...
-        self.mdi.subWindowList()[0].widget().setText("<b>Edit > Cut</b> clicked")
+        print("TODO")
 
-    def createMDISubWindow(self, pixmap, isExistingImage=False):
+    def createMDISubWindow(self, title, pixmap, isExistingImage=False):
         sub = QMdiSubWindow()
         label_image = QLabel()
         label_image.setPixmap(pixmap)
+        label_image.setAlignment(Qt.AlignCenter)
+        sub.setWindowTitle(title)
         sub.setWidget(label_image)
+        sub.adjustSize()
         self.mdi.addSubWindow(sub)
         sub.show()
-        if isExistingImage:
+        if not isExistingImage:
             self._subWindowCounter +=1
 
-    ######################################################
-    # When the user clicks on some navbar action
-    ######################################################
+    def thresholdImage(self):
+        seuil = 100
+        image = QPixmap("C:/Users/Ipro/PycharmProjects/AnalyseImage/images/lena.gif").toImage()
+        image = image.convertToFormat(QImage.Format_Grayscale8)
+        self.createMDISubWindow("Sans Titre "+ str(self._subWindowCounter), QPixmap(image))
+        new_image = ImageFunctions.seuillage_haut(image, seuil)
+        self.createMDISubWindow("Sans Titre "+str(self._subWindowCounter), QPixmap(new_image))
 
-    def fileBarAction(self, q):
-        print("I CLICKED on File ACTION")
-        if (q.text() == "New"):
-            sub = QMdiSubWindow()
-            sub.setWidget(QLabel())
-            self.mdi.addSubWindow(sub)
-            sub.show()
+    def additionImage(self):
+        # Logic for cutting content goes here...
+        print("TODO")
 
-    def displayBarAction(self, q):
-        print("I CLICKED on Display ACTION")
-        if q.text() == "Cascade":
-            self.mdi.cascadeSubWindows()
+    def substractImage(self):
+        # Logic for cutting content goes here...
+        print("TODO")
 
-        if q.text() == "Tuile":
-            self.mdi.tileSubWindows()
 
 ##############################################################################
 ##############################################################################
