@@ -47,6 +47,9 @@ class ThresholdDialog(QDialog):
         self.radio_low = QRadioButton(self.groupBox_2)
         self.radio_low.setObjectName("radio_low")
         self.horizontalLayout_2.addWidget(self.radio_low)
+        self.radio_binarize = QRadioButton(self.groupBox_2)
+        self.radio_binarize.setObjectName("radio_binarize")
+        self.horizontalLayout_2.addWidget(self.radio_binarize)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -105,6 +108,7 @@ class ThresholdDialog(QDialog):
         self.label_2.setText(_translate("Dialog", "Type de seuillage :"))
         self.radio_high.setText(_translate("Dialog", "Haut"))
         self.radio_low.setText(_translate("Dialog", "Bas"))
+        self.radio_binarize.setText(_translate("Dialog", "Binarisation"))
         self.label.setText(_translate("Dialog", "Seuil (0-255) :"))
         self.slider_value.setText(_translate("Dialog", "127"))
         self.groupBox_3.setTitle(_translate("Dialog", "Aperçu de l\'image"))
@@ -116,11 +120,14 @@ class ThresholdDialog(QDialog):
 
     def actualizePreview(self):
         seuillage_haut = self.radio_high.isChecked()
+        seuillage_bas = self.radio_high.isChecked()
         seuil = self.slider.value()
         # Avoid image and new_image to become the same object (same adress)
         temp = QImage(self.image)
         if seuillage_haut:
             self.new_image = ImageFunctions.seuillage_haut(temp, seuil)
-        else:
+        elif seuillage_bas:
             self.new_image = ImageFunctions.seuillage_bas(temp, seuil)
+        else:
+            self.new_image = ImageFunctions.binarisation(temp, seuil)
         self.preview.setPixmap(QPixmap(self.new_image).scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))

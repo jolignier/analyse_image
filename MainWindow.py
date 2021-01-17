@@ -29,6 +29,7 @@ from view import *
 # Multiple windows and in details multiple Images shown in the application
 ##############################################################################
 from view.AdditionSubstractionDialog import AdditionSubstractionDialog
+from view.ErosionDilatationDialog import ErosionDilatationDialog
 from view.ThresholdDialog import ThresholdDialog
 
 
@@ -77,11 +78,7 @@ class MainWindow(QMainWindow):
         functionsToolBar.addAction(self.thresholdAction)
         functionsToolBar.addAction(self.additionAction)
         functionsToolBar.addAction(self.substractAction)
-
-    def _createStatusBar(self):
-        self.statusbar = self.statusBar()
-        # Temporary message
-        self.statusbar.showMessage("Ready", 3000)
+        functionsToolBar.addAction(self.erosionDilatationAction)
 
     def _createActions(self):
         # File actions
@@ -107,6 +104,7 @@ class MainWindow(QMainWindow):
         self.thresholdAction = QAction("Seuillage")
         self.additionAction = QAction("Addition")
         self.substractAction = QAction("Soustraction")
+        self.erosionDilatationAction = QAction("Erosion / Dilatation")
 
     def _connectActions(self):
         # Connect File actions
@@ -124,6 +122,7 @@ class MainWindow(QMainWindow):
         self.thresholdAction.triggered.connect(self.thresholdImage)
         self.additionAction.triggered.connect(self.additionImage)
         self.substractAction.triggered.connect(self.substractImage)
+        self.erosionDilatationAction.triggered.connect(self.erosionDilatation)
 
     def openFile(self):
         # Get file to load
@@ -231,6 +230,23 @@ class MainWindow(QMainWindow):
                 image = ImageFunctions.soustraction(image1, image2)
                 self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(image))
             dialog.close()
+
+
+    def erosionDilatation(self):
+        sub = self.getFocusedSubWindow()
+        dialog = ErosionDilatationDialog()
+        #dialog.radio_boule.setEnabled(False)
+        #dialog.radio_carre.setChecked(True)
+        result = dialog.exec_()
+        if result == QDialog.Accepted:
+            isErosion, isBoule, dim = dialog.getValues()
+            strel = ImageFunctions.createStrel(dim, isBoule)
+            image = sub.widget().pixmap().toImage()
+            if isErosion:
+                new_image = ImageFunctions.erosion(image, strel)
+            else:
+                new_image = ImageFunctions.dilatation(image, strel)
+            self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
 
 
     def getFocusedSubWindow(self) -> QMdiSubWindow:

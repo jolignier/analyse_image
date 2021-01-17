@@ -19,6 +19,12 @@ import numpy as np
 ##########################################################
 ##########################################################
 
+def binarisation(image: QImage, seuil):
+    new_image = seuillage_haut(image, seuil)
+    final_image = seuillage_bas(new_image, seuil)
+    return final_image
+
+
 # Si le pixel est supérieur au seuil,
 # celui ci est blanc
 def seuillage_haut(image: QImage, seuil: int) -> QImage:
@@ -26,7 +32,7 @@ def seuillage_haut(image: QImage, seuil: int) -> QImage:
 
     for i in range(0, image.width()):
         for j in range(0, image.height()):
-            if image.pixel(i, j) > qRgb(seuil, seuil, seuil):
+            if image.pixel(i, j) >= qRgb(seuil, seuil, seuil):
                 new_image.setPixel(i, j, qRgb(255,255,255))
     return new_image
 
@@ -111,3 +117,10 @@ def squelettisation_amincissement_homothopique(image) -> QImage:
     return 0;
 
 
+def createStrel(dim, isBoule=False):
+    strel = []
+    line =[255]*dim
+    for i in range(0, dim):
+        strel.append(line)
+
+    return strel

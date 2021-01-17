@@ -12,8 +12,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-import ImageFunctions
-
 class AdditionSubstractionDialog(QDialog):
 
     def __init__(self, liste, *args, **kwargs):
