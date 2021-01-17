@@ -234,19 +234,21 @@ class MainWindow(QMainWindow):
 
     def erosionDilatation(self):
         sub = self.getFocusedSubWindow()
-        dialog = ErosionDilatationDialog()
-        #dialog.radio_boule.setEnabled(False)
-        #dialog.radio_carre.setChecked(True)
-        result = dialog.exec_()
-        if result == QDialog.Accepted:
-            isErosion, isBoule, dim = dialog.getValues()
-            strel = ImageFunctions.createStrel(dim, isBoule)
-            image = sub.widget().pixmap().toImage()
-            if isErosion:
-                new_image = ImageFunctions.erosion(image, strel)
-            else:
-                new_image = ImageFunctions.dilatation(image, strel)
-            self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
+        if sub is not None:
+            dialog = ErosionDilatationDialog()
+            dialog.radio_boule.setEnabled(False)
+            dialog.radio_carre.setChecked(True)
+            dialog.radio_erosion.setChecked(True)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                isErosion, isBoule, dim = dialog.getValues()
+                strel = ImageFunctions.createStrel(dim, isBoule)
+                image = sub.widget().pixmap().toImage()
+                if isErosion:
+                    new_image = ImageFunctions.erosion(image, strel)
+                else:
+                    new_image = ImageFunctions.dilatation(image, strel)
+                self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
 
 
     def getFocusedSubWindow(self) -> QMdiSubWindow:
