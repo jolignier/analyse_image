@@ -44,13 +44,31 @@ def seuillage_bas(image: QImage, seuil: int) -> QImage:
 
 
 def addition(image1, image2) -> QImage:
-    print("TODO")
-    return 0;
+    new_image = image1
+
+    for i in range(0, image1.width()):
+        for j in range(0, image1.height()):
+            pixel1 = QColor(image1.pixel(i, j)).getRgb()
+            pixel2 = QColor(image2.pixel(i, j)).getRgb()
+            r = pixel1[0] + pixel2[0] if pixel1[0] + pixel2[0] < 255 else 255
+            g = pixel1[1] + pixel2[1] if pixel1[1] + pixel2[1] < 255 else 255
+            b = pixel1[2] + pixel2[2] if pixel1[2] + pixel2[2] < 255 else 255
+            new_image.setPixel(i, j, qRgb(r,g,b))
+    return new_image
 
 
-def soustraction(image1, image2) -> QImage:
-    print("TODO")
-    return 0;
+def soustraction(image1: QImage, image2) -> QImage:
+    new_image = image1
+
+    for i in range(0, image1.width()):
+        for j in range(0, image1.height()):
+            pixel1 = QColor(image1.pixel(i, j)).getRgb()
+            pixel2 = QColor(image2.pixel(i, j)).getRgb()
+            r = pixel1[0] - pixel2[0] if pixel1[0] + pixel2[0] > 0 else 0
+            g = pixel1[1] - pixel2[1] if pixel1[1] + pixel2[1] > 0 else 0
+            b = pixel1[2] - pixel2[2] if pixel1[2] + pixel2[2] > 0 else 0
+            new_image.setPixel(i, j, qRgb(r, g, b))
+    return new_image
 
 
 def erosion(image, strel) -> QImage:

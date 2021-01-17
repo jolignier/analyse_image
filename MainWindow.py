@@ -28,6 +28,7 @@ from view import *
 # MainWindow Class is a Multiple Document Interface allowing us to manage
 # Multiple windows and in details multiple Images shown in the application
 ##############################################################################
+from view.AdditionSubstractionDialog import AdditionSubstractionDialog
 from view.ThresholdDialog import ThresholdDialog
 
 
@@ -188,12 +189,49 @@ class MainWindow(QMainWindow):
                 self.createMDISubWindow("Sans Titre "+str(self._subWindowCounter), QPixmap(dialog.getImage()))
 
     def additionImage(self):
-        # Logic for cutting content goes here...
-        print("TODO")
+        liste = self.mdi.subWindowList()
+        if len(liste) > 0:
+            dialog = AdditionSubstractionDialog(liste)
+            dialog.radio_addition.setChecked(True)
+            dialog.radio_substract.setChecked(False)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                title1, title2 = dialog.getTitles()
+                for sub in liste:
+                    if title1 == sub.windowTitle():
+                        sub1 = sub
+                    if title2 == sub.windowTitle():
+                        sub2 = sub
+                image1 = sub1.widget().pixmap().toImage()
+                image1 = image1.convertToFormat(QImage.Format_Grayscale8)
+                image2 = sub2.widget().pixmap().toImage()
+                image2 = image2.convertToFormat(QImage.Format_Grayscale8)
+                image = ImageFunctions.addition(image1, image2)
+                self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(image))
+            dialog.close()
 
     def substractImage(self):
-        # Logic for cutting content goes here...
-        print("TODO")
+        liste = self.mdi.subWindowList()
+        if len(liste) > 0:
+            dialog = AdditionSubstractionDialog(liste)
+            dialog.radio_addition.setChecked(True)
+            dialog.radio_substract.setChecked(False)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                title1, title2 = dialog.getTitles()
+                for sub in liste:
+                    if title1 == sub.windowTitle():
+                        sub1 = sub
+                    if title2 == sub.windowTitle():
+                        sub2 = sub
+                image1 = sub1.widget().pixmap().toImage()
+                image1 = image1.convertToFormat(QImage.Format_Grayscale8)
+                image2 = sub2.widget().pixmap().toImage()
+                image2 = image2.convertToFormat(QImage.Format_Grayscale8)
+                image = ImageFunctions.soustraction(image1, image2)
+                self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(image))
+            dialog.close()
+
 
     def getFocusedSubWindow(self) -> QMdiSubWindow:
         sub = self.mdi.currentSubWindow()
