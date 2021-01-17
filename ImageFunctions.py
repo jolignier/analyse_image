@@ -3,6 +3,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 import numpy as np
+import math
 
 
 ##########################################################
@@ -78,55 +79,63 @@ def soustraction(image1: QImage, image2) -> QImage:
 
 
 def erosion(image: QImage, strel: list) -> QImage:
-    new_image = image
+    new_image = QImage(image)
+    half_strel = math.floor(len(strel)/2)
+    last_pixel = 0
+    isInObject = False
+    for i in range(half_strel, image.width()-half_strel):
+        for j in range(half_strel, image.height()-half_strel):
+            # if transition = change betwen outside and inside
+            if QColor(image.pixel(i, j)).getRgb()[0] != last_pixel:
+                isInObject = False if isInObject else True
 
-    for i in range(len(strel) / 2, image.width - len(strel) / 2):
-        for j in range(len(strel) / 2, image.height - len(strel) / 2):
-
-
-
-            for k in range(i - len(strel) / 2, i + len(strel) / 2):
-                for l in range(j - len(strel) / 2, j + len(strel) / 2):
-
-                    if QColor(image.pixel(k, l)).getRgb()[0] == 0:
-                        new_image.setPixel(i, j, qRgb(0, 0, 0))
+            if isInObject:
+                hasBlackPixel = False
+                for k in range(i - half_strel, i + half_strel):
+                    for l in range(j - half_strel, j + half_strel):
+                        if QColor(image.pixel(k, l)).getRgb()[0] == 0:
+                            hasBlackPixel = True
+                            break
+                    if hasBlackPixel:
                         break
+                if hasBlackPixel:
+                    for k in range(i - half_strel, i + half_strel):
+                        for l in range(j - half_strel, j + half_strel):
+                            new_image.setPixel(k, l, qRgb(0, 0, 0))
 
-                if QColor(image.pixel(k, l)).getRgb()[0] == 0:
-                    break
 
-    return new_image;
+
+
+    return new_image
 
 
 def dilatation(image, strel) -> QImage:
-    new_image = image
-
-    for i in range(len(strel) / 2, image.width - len(strel) / 2):
-        for j in range(len(strel) / 2, image.height - len(strel) / 2):
-
-
-            for k in range(i - len(strel) / 2, i + len(strel) / 2):
-                for l in range(j - len(strel) / 2, j + len(strel) / 2):
-
-                    if QColor(image.pixel(k, l)).getRgb()[0] == 255:
-                        new_image.setPixel(i, j, qRgb(255, 255, 255))
+    new_image = QImage(image)
+    half_strel = math.floor(len(strel)/2)
+    for i in range(half_strel, image.width()-half_strel, len(strel)-1):
+        for j in range(half_strel, image.height()-half_strel, len(strel)-1):
+            # Strel
+            hasWhitePixel = False
+            for k in range(i - half_strel, i + half_strel):
+                for l in range(j - half_strel, j + half_strel):
+                    if  QColor(image.pixel(k, l)).getRgb()[0] == 255:
+                        hasWhitePixel = True
                         break
+            if hasWhitePixel:
+                for k in range(i - half_strel, i + half_strel):
+                    for l in range(j - half_strel, j + half_strel):
+                        new_image.setPixel(k, l, qRgb(255,255,255))
 
-                if QColor(image.pixel(k, l)).getRgb()[0] == 255:
-                    break
-
-    return new_image;
+    return new_image
 
 
 def ouverture(image, strel) -> QImage:
-    print("TODO")
-    return 0;
-
+    new_image = erosion(dilatation(image, strel), strel)
+    return new_image
 
 def fermeture(image, strel) -> QImage:
-    print("TODO")
-    return 0;
-
+    new_image = dilatation(erosion(image, strel), strel)
+    return new_image
 
 def amincissement(image, strel) -> QImage:
     print("TODO")
