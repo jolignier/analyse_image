@@ -106,4 +106,4 @@ class ErosionDilatationDialog(QDialog):
             self.dimension.setValue(self.dimension.value()+1)
 
     def getValues(self):
-        return self.radio_erosion.isChecked(), self.radio_boule.isChecked(), self.dimension
+        return self.radio_erosion.isChecked(), self.radio_boule.isChecked(), self.dimension.value()
