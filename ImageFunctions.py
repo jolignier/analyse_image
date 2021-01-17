@@ -137,14 +137,37 @@ def fermeture(image, strel) -> QImage:
     new_image = dilatation(erosion(image, strel), strel)
     return new_image
 
-def amincissement(image, strel) -> QImage:
-    print("TODO")
-    return 0;
+def amincissement(image, strel, max_iter) -> QImage:
+    new_image = QImage(image)
+    # Half strel is always 3/2 => 1
+    for nb_iter in range(0, max_iter*8):
+        new_image = QImage(image)
+        for i in range(1, image.width() - 1):
+            for j in range(1, image.height() - 1):
+                #Strel
+                if doStrelFit(image, i, j, strel):
+                    new_image.setPixel(i, j, qRgb(0, 0, 0))
+        strel = getNextStrel(strel)
+        print("FINISHED ITERATION ", nb_iter)
+        image = QImage(new_image)
+    return new_image
 
 
-def epaississement(image, strel) -> QImage:
-    print("TODO")
-    return 0;
+
+def epaississement(image, strel, max_iter) -> QImage:
+    new_image = QImage(image)
+    # Half strel is always 3/2 => 1
+    for nb_iter in range(0, max_iter * 8):
+        new_image = QImage(image)
+        for i in range(1, image.width() - 1):
+            for j in range(1, image.height() - 1):
+                # Strel
+                if doStrelFit(image, i, j, strel):
+                    new_image.setPixel(i, j, qRgb(255, 255, 255))
+        strel = getNextStrel(strel)
+        print("FINISHED ITERATION ", nb_iter)
+        image = QImage(new_image)
+    return new_image
 
 
 def squelettisation_Lantuejoul(image) -> QImage:
@@ -153,9 +176,22 @@ def squelettisation_Lantuejoul(image) -> QImage:
 
 
 def squelettisation_amincissement_homothopique(image) -> QImage:
-    print("TODO")
-    return 0;
+    strel = createThinningStrel()
+    new_image = amincissement(image, strel)
+    while image != new_image:
+        new_image = amincissement(new_image, strel)
+    return new_image
 
+def doStrelFit(image,i,j, strel):
+    nb_fit = 0
+    for k in range(-1, 2):
+        for l in range(-1, 2):
+            if QColor(image.pixel(i - k, j - l)).getRgb()[0] == strel[k + 1][l + 1] or strel[k + 1][l + 1] == 111:
+                nb_fit +=1
+    if nb_fit == 9:
+        return True
+    else:
+        return False
 
 def createStrel(dim, isBoule=False):
     strel = []
@@ -164,3 +200,24 @@ def createStrel(dim, isBoule=False):
         strel.append(line)
 
     return strel
+
+def createThinningStrel():
+    return [
+        [0, 0, 0],
+        [111, 255, 111 ], # 111 is the joker v
+        [255, 255, 255]
+    ]
+
+def createThickingStrel():
+    return [
+        [0, 0, 0],
+        [111, 0, 111 ], # 111 is the joker v
+        [255, 255, 255]
+    ]
+
+def getNextStrel(s):
+    return [
+        [ s[1][0], s[0][0], s[0][1] ],
+        [ s[2][0], s[1][1], s[0][2] ],
+        [ s[2][1], s[2][2], s[1][2] ]
+    ]

@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import *
 import resources
 
 import ImageFunctions
-from view import *
 
 #
 # Required modules are :
@@ -31,6 +30,8 @@ from view import *
 from view.AdditionSubstractionDialog import AdditionSubstractionDialog
 from view.ErosionDilatationDialog import ErosionDilatationDialog
 from view.ThresholdDialog import ThresholdDialog
+from view.OpeningClosingDialog import OpeningClosingDialog
+from view.ThinningThickingDialog import ThinningThickingDialog
 
 
 class MainWindow(QMainWindow):
@@ -79,6 +80,8 @@ class MainWindow(QMainWindow):
         functionsToolBar.addAction(self.additionAction)
         functionsToolBar.addAction(self.substractAction)
         functionsToolBar.addAction(self.erosionDilatationAction)
+        functionsToolBar.addAction(self.openingClosingAction)
+        functionsToolBar.addAction(self.thinningThickingAction)
 
     def _createActions(self):
         # File actions
@@ -105,6 +108,8 @@ class MainWindow(QMainWindow):
         self.additionAction = QAction("Addition")
         self.substractAction = QAction("Soustraction")
         self.erosionDilatationAction = QAction("Erosion / Dilatation")
+        self.openingClosingAction = QAction("Ouverture / Fermeture")
+        self.thinningThickingAction = QAction("Amincissement / Epaississeement")
 
     def _connectActions(self):
         # Connect File actions
@@ -123,6 +128,8 @@ class MainWindow(QMainWindow):
         self.additionAction.triggered.connect(self.additionImage)
         self.substractAction.triggered.connect(self.substractImage)
         self.erosionDilatationAction.triggered.connect(self.erosionDilatation)
+        self.openingClosingAction.triggered.connect(self.openingClosing)
+        self.thinningThickingAction.triggered.connect(self.thinningThicking)
 
     def openFile(self):
         # Get file to load
@@ -244,10 +251,48 @@ class MainWindow(QMainWindow):
                 isErosion, isBoule, dim = dialog.getValues()
                 strel = ImageFunctions.createStrel(dim, isBoule)
                 image = sub.widget().pixmap().toImage()
+                image.convertToFormat(QImage.Format_Grayscale8)
                 if isErosion:
                     new_image = ImageFunctions.erosion(image, strel)
                 else:
                     new_image = ImageFunctions.dilatation(image, strel)
+                self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
+
+    def openingClosing(self):
+        sub = self.getFocusedSubWindow()
+        if sub is not None:
+            dialog = OpeningClosingDialog()
+            dialog.radio_boule.setEnabled(False)
+            dialog.radio_carre.setChecked(True)
+            dialog.radio_opening.setChecked(True)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                isOpening, isBoule, dim = dialog.getValues()
+                strel = ImageFunctions.createStrel(dim, isBoule)
+                image = sub.widget().pixmap().toImage()
+                image.convertToFormat(QImage.Format_Grayscale8)
+                if isOpening:
+                    new_image = ImageFunctions.erosion(image, strel)
+                else:
+                    new_image = ImageFunctions.dilatation(image, strel)
+                self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
+
+    def thinningThicking(self):
+        sub = self.getFocusedSubWindow()
+        if sub is not None:
+            dialog = ThinningThickingDialog()
+            dialog.radio_thinning.setChecked(True)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                isThinning, max_iter = dialog.getValues()
+                image = sub.widget().pixmap().toImage()
+                image.convertToFormat(QImage.Format_Grayscale8)
+                if isThinning:
+                    strel = ImageFunctions.createThinningStrel()
+                    new_image = ImageFunctions.amincissement(image, strel, max_iter)
+                else:
+                    strel = ImageFunctions.createThickingStrel()
+                    new_image = ImageFunctions.epaississement(image, strel, max_iter)
                 self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
 
 

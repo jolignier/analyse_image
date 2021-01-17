@@ -13,10 +13,10 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 
-class ErosionDilatationDialog(QDialog):
+class ThinningThickingDialog(QDialog):
 
     def __init__(self, *args, **kwargs):
-        super(ErosionDilatationDialog, self).__init__(*args, **kwargs)
+        super(ThinningThickingDialog, self).__init__(*args, **kwargs)
 
         self.setObjectName("Dialog")
         self.resize(403, 309)
@@ -32,12 +32,12 @@ class ErosionDilatationDialog(QDialog):
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
-        self.radio_erosion = QRadioButton(self.groupBox)
-        self.radio_erosion.setObjectName("radio_erosion")
-        self.horizontalLayout_3.addWidget(self.radio_erosion)
-        self.radio_dilatation = QRadioButton(self.groupBox)
-        self.radio_dilatation.setObjectName("radio_dilatation")
-        self.horizontalLayout_3.addWidget(self.radio_dilatation)
+        self.radio_thinning = QRadioButton(self.groupBox)
+        self.radio_thinning.setObjectName("radio_thinning")
+        self.horizontalLayout_3.addWidget(self.radio_thinning)
+        self.radio_thicking = QRadioButton(self.groupBox)
+        self.radio_thicking.setObjectName("radio_thicking")
+        self.horizontalLayout_3.addWidget(self.radio_thicking)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
         spacerItem = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
@@ -47,18 +47,6 @@ class ErosionDilatationDialog(QDialog):
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         spacerItem1 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem1)
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_2 = QLabel(self.groupBox_2)
-        self.label_2.setObjectName("label_2")
-        self.horizontalLayout_2.addWidget(self.label_2)
-        self.radio_boule = QRadioButton(self.groupBox_2)
-        self.radio_boule.setObjectName("radio_boule")
-        self.horizontalLayout_2.addWidget(self.radio_boule)
-        self.radio_carre = QRadioButton(self.groupBox_2)
-        self.radio_carre.setObjectName("radio_carre")
-        self.horizontalLayout_2.addWidget(self.radio_carre)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         spacerItem2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem2)
         self.formLayout = QFormLayout()
@@ -66,12 +54,11 @@ class ErosionDilatationDialog(QDialog):
         self.label = QLabel(self.groupBox_2)
         self.label.setObjectName("label")
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
-        self.dimension = QSpinBox(self.groupBox_2)
-        self.dimension.setMinimum(3)
-        self.dimension.setMaximum(100)
-        self.dimension.setSingleStep(2)
-        self.dimension.setObjectName("dimension")
-        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.dimension)
+        self.iteration = QSpinBox(self.groupBox_2)
+        self.iteration.setMinimum(1)
+        self.iteration.setMaximum(100)
+        self.iteration.setObjectName("iteration")
+        self.formLayout.setWidget(0, QFormLayout.FieldRole, self.iteration)
         self.verticalLayout_2.addLayout(self.formLayout)
         spacerItem3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem3)
@@ -86,24 +73,16 @@ class ErosionDilatationDialog(QDialog):
         self.retranslateUi()
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-        self.dimension.valueChanged.connect(self.onSpinBoxValueChanged)
         QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self):
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("Dialog", "Options"))
         self.label_4.setText(_translate("Dialog", "Type d\'opération :"))
-        self.radio_erosion.setText(_translate("Dialog", "Erosion"))
-        self.radio_dilatation.setText(_translate("Dialog", "Dilatation"))
+        self.radio_thinning.setText(_translate("Dialog", "Amincissement"))
+        self.radio_thicking.setText(_translate("Dialog", "Epaississement"))
         self.groupBox_2.setTitle(_translate("Dialog", "Options d\'entrées"))
-        self.label_2.setText(_translate("Dialog", "Type :"))
-        self.radio_boule.setText(_translate("Dialog", "Boule"))
-        self.radio_carre.setText(_translate("Dialog", "Carré"))
-        self.label.setText(_translate("Dialog", "Dimension"))
-
-    def onSpinBoxValueChanged(self):
-        if self.dimension.value() %2 == 0:
-            self.dimension.setValue(self.dimension.value()+1)
+        self.label.setText(_translate("Dialog", "Nombre d'itération"))
 
     def getValues(self):
-        return self.radio_erosion.isChecked(), self.radio_boule.isChecked(), self.dimension.value()
+        return self.radio_thinning.isChecked(), self.iteration.value()

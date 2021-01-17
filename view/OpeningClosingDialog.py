@@ -13,10 +13,10 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
 
-class ErosionDilatationDialog(QDialog):
+class OpeningClosingDialog(QDialog):
 
     def __init__(self, *args, **kwargs):
-        super(ErosionDilatationDialog, self).__init__(*args, **kwargs)
+        super(OpeningClosingDialog, self).__init__(*args, **kwargs)
 
         self.setObjectName("Dialog")
         self.resize(403, 309)
@@ -32,12 +32,12 @@ class ErosionDilatationDialog(QDialog):
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
-        self.radio_erosion = QRadioButton(self.groupBox)
-        self.radio_erosion.setObjectName("radio_erosion")
-        self.horizontalLayout_3.addWidget(self.radio_erosion)
-        self.radio_dilatation = QRadioButton(self.groupBox)
-        self.radio_dilatation.setObjectName("radio_dilatation")
-        self.horizontalLayout_3.addWidget(self.radio_dilatation)
+        self.radio_opening = QRadioButton(self.groupBox)
+        self.radio_opening.setObjectName("radio_opening")
+        self.horizontalLayout_3.addWidget(self.radio_opening)
+        self.radio_closing = QRadioButton(self.groupBox)
+        self.radio_closing.setObjectName("radio_closing")
+        self.horizontalLayout_3.addWidget(self.radio_closing)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
         spacerItem = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout_3.addItem(spacerItem)
@@ -93,8 +93,8 @@ class ErosionDilatationDialog(QDialog):
         _translate = QCoreApplication.translate
         self.setWindowTitle(_translate("Dialog", "Options"))
         self.label_4.setText(_translate("Dialog", "Type d\'opération :"))
-        self.radio_erosion.setText(_translate("Dialog", "Erosion"))
-        self.radio_dilatation.setText(_translate("Dialog", "Dilatation"))
+        self.radio_opening.setText(_translate("Dialog", "Ouverture"))
+        self.radio_closing.setText(_translate("Dialog", "Fermeture"))
         self.groupBox_2.setTitle(_translate("Dialog", "Options d\'entrées"))
         self.label_2.setText(_translate("Dialog", "Type :"))
         self.radio_boule.setText(_translate("Dialog", "Boule"))
@@ -106,4 +106,4 @@ class ErosionDilatationDialog(QDialog):
             self.dimension.setValue(self.dimension.value()+1)
 
     def getValues(self):
-        return self.radio_erosion.isChecked(), self.radio_boule.isChecked(), self.dimension.value()
+        return self.radio_opening.isChecked(), self.radio_boule.isChecked(), self.dimension.value()
