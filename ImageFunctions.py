@@ -21,7 +21,7 @@ import numpy as np
 
 # Si le pixel est supérieur au seuil,
 # celui ci est blanc
-def seuillage_haut(image: QImage, seuil: int):
+def seuillage_haut(image: QImage, seuil: int) -> QImage:
     new_image = image
 
     for i in range(0, image.width()):
@@ -30,9 +30,10 @@ def seuillage_haut(image: QImage, seuil: int):
                 new_image.setPixel(i, j, qRgb(255,255,255))
     return new_image
 
+
 # Si le pixel est inférieur au seuil,
 # celui ci est noir
-def seuillage_bas(image: QImage, seuil: int):
+def seuillage_bas(image: QImage, seuil: int) -> QImage:
     new_image = image
 
     for i in range(0, image.width()):
@@ -42,52 +43,52 @@ def seuillage_bas(image: QImage, seuil: int):
     return new_image
 
 
-def addition(image1, image2):
+def addition(image1, image2) -> QImage:
     print("TODO")
     return 0;
 
 
-def soustraction(image1, image2):
+def soustraction(image1, image2) -> QImage:
     print("TODO")
     return 0;
 
 
-def erosion(image, strel):
+def erosion(image, strel) -> QImage:
     print("TODO")
     return 0;
 
 
-def dilatation(image, strel):
+def dilatation(image, strel) -> QImage:
     print("TODO")
     return 0;
 
 
-def ouverture(image, strel):
+def ouverture(image, strel) -> QImage:
     print("TODO")
     return 0;
 
 
-def fermeture(image, strel):
+def fermeture(image, strel) -> QImage:
     print("TODO")
     return 0;
 
 
-def amincissement(image, strel):
+def amincissement(image, strel) -> QImage:
     print("TODO")
     return 0;
 
 
-def epaississement(image, strel):
+def epaississement(image, strel) -> QImage:
     print("TODO")
     return 0;
 
 
-def squelettisation_Lantuejoul(image):
+def squelettisation_Lantuejoul(image) -> QImage:
     print("TODO")
     return 0;
 
 
-def squelettisation_amincissement_homothopique(image):
+def squelettisation_amincissement_homothopique(image) -> QImage:
     print("TODO")
     return 0;
 

@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 import resources
 
 import ImageFunctions
+from view import *
 
 #
 # Required modules are :
@@ -15,12 +16,20 @@ import ImageFunctions
 #   - PyQT5-sip
 #   - numpy
 
+# Optional:
+# - PyQt5Designer : GUI Designer to export python code
+#       -> Open with terminal in venv : designer.exe
+#       -> To export code : pyuic5 input.ui -o output.py
+#       -> To export qrc resources pyrcc5 resource.qrc -o resource.py
+
 
 
 ##############################################################################
 # MainWindow Class is a Multiple Document Interface allowing us to manage
 # Multiple windows and in details multiple Images shown in the application
 ##############################################################################
+from view.ThresholdDialog import ThresholdDialog
+
 
 class MainWindow(QMainWindow):
 
@@ -117,7 +126,7 @@ class MainWindow(QMainWindow):
 
     def openFile(self):
         # Get file to load
-        file = QFileDialog.getOpenFileName(self, 'Open File', QDir.currentPath(), "Image files (*.jpg *.gif, *.png)")
+        file = QFileDialog.getOpenFileName(self, 'Open File', '', "Image files (*.jpg *.gif *.png)")
         file_path = file[0]
         # create a subwindow with the image
         pixmap = QPixmap(file_path)
@@ -125,12 +134,16 @@ class MainWindow(QMainWindow):
 
 
     def saveFile(self):
-        # Logic for saving a file goes here...
-        print("TODO")
+        self.saveAsFile()
+
 
     def saveAsFile(self):
-        # Logic for saving a file goes here...
-        print("TODO")
+        selectedSubWindow = self.getFocusedSubWindow()
+        if selectedSubWindow is not None:
+            image = selectedSubWindow.widget().pixmap()
+            fileName = QFileDialog.getSaveFileName(self, 'Sauvegarder sous ...', '', "Images Files (*.png *.jpeg *.gif)")[0]
+            if not fileName == '':
+                image.save(fileName, "PNG")
 
     def copyContent(self):
         # Logic for copying content goes here...
@@ -158,12 +171,14 @@ class MainWindow(QMainWindow):
             self._subWindowCounter +=1
 
     def thresholdImage(self):
-        seuil = 100
-        image = QPixmap("C:/Users/Ipro/PycharmProjects/AnalyseImage/images/lena.gif").toImage()
-        image = image.convertToFormat(QImage.Format_Grayscale8)
-        self.createMDISubWindow("Sans Titre "+ str(self._subWindowCounter), QPixmap(image))
-        new_image = ImageFunctions.seuillage_haut(image, seuil)
-        self.createMDISubWindow("Sans Titre "+str(self._subWindowCounter), QPixmap(new_image))
+        selectedSubWindow = self.getFocusedSubWindow()
+        if selectedSubWindow is not None:
+            image = selectedSubWindow.widget().pixmap().toImage()
+            image = image.convertToFormat(QImage.Format_Grayscale8)
+            dialog = ThresholdDialog(image)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                self.createMDISubWindow("Sans Titre "+str(self._subWindowCounter), QPixmap(dialog.getImage()))
 
     def additionImage(self):
         # Logic for cutting content goes here...
@@ -172,6 +187,10 @@ class MainWindow(QMainWindow):
     def substractImage(self):
         # Logic for cutting content goes here...
         print("TODO")
+
+    def getFocusedSubWindow(self) -> QMdiSubWindow:
+        sub = self.mdi.currentSubWindow()
+        return sub
 
 
 ##############################################################################
