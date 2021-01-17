@@ -129,8 +129,15 @@ class MainWindow(QMainWindow):
         file = QFileDialog.getOpenFileName(self, 'Open File', '', "Image files (*.jpg *.gif *.png)")
         file_path = file[0]
         # create a subwindow with the image
-        pixmap = QPixmap(file_path)
-        self.createMDISubWindow(file_path, pixmap, True)
+        isOpen = False
+        for sub in self.mdi.subWindowList():
+            if sub.windowTitle() == file_path:
+                isOpen = True
+                self.mdi.setActiveSubWindow(sub)
+                break;
+        if not isOpen:
+            pixmap = QPixmap(file_path)
+            self.createMDISubWindow(file_path, pixmap, True)
 
 
     def saveFile(self):
