@@ -171,15 +171,43 @@ def epaississement(image, strel, max_iter) -> QImage:
 
 
 def squelettisation_Lantuejoul(image) -> QImage:
-    print("TODO")
-    return 0;
+    height, width = image.shape
+
+    resultat = np.zeros((height, width), dtype=np.uint8)
+
+    stop = 1
+    compteur = 0
+    degre_erosion = 0
+    while stop != 0:
+        img1 = image.copy()
+        compteur = 0
+
+        # VERIFICATION SI IMAGE NOIR (vide)
+        for degre in range(0, degre_erosion):
+            img1 = erosion(img1)
+
+        for i in range(0, height):
+            for j in range(0, width):
+                val1 = int(img1[i, j])
+                if val1 == 255:
+                    compteur = compteur + 1
+        stop = compteur
+        img2 = ouverture(img1)
+
+        img3 = soustraction(img1, img2)
+
+        resultat = addition(resultat, img3)
+        degre_erosion = degre_erosion + 1
+
+    # Lantuejoul Resultat_n = Resultat_n-1 + (erosion - ouverture)
 
 
 def squelettisation_amincissement_homothopique(image) -> QImage:
     strel = createThinningStrel()
-    new_image = amincissement(image, strel)
+    new_image = amincissement(image, strel, 1)
     while image != new_image:
-        new_image = amincissement(new_image, strel)
+        image = new_image
+        new_image = amincissement(new_image, strel, 1)
     return new_image
 
 def doStrelFit(image,i,j, strel):

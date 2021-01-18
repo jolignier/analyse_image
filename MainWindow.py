@@ -32,6 +32,7 @@ from view.ErosionDilatationDialog import ErosionDilatationDialog
 from view.ThresholdDialog import ThresholdDialog
 from view.OpeningClosingDialog import OpeningClosingDialog
 from view.ThinningThickingDialog import ThinningThickingDialog
+from view.SquelettisationDialog import SquelettisationDialog
 
 
 class MainWindow(QMainWindow):
@@ -82,6 +83,7 @@ class MainWindow(QMainWindow):
         functionsToolBar.addAction(self.erosionDilatationAction)
         functionsToolBar.addAction(self.openingClosingAction)
         functionsToolBar.addAction(self.thinningThickingAction)
+        functionsToolBar.addAction(self.squelettisationAction)
 
     def _createActions(self):
         # File actions
@@ -110,6 +112,7 @@ class MainWindow(QMainWindow):
         self.erosionDilatationAction = QAction("Erosion / Dilatation")
         self.openingClosingAction = QAction("Ouverture / Fermeture")
         self.thinningThickingAction = QAction("Amincissement / Epaississeement")
+        self.squelettisationAction = QAction("Squelletisation")
 
     def _connectActions(self):
         # Connect File actions
@@ -130,6 +133,7 @@ class MainWindow(QMainWindow):
         self.erosionDilatationAction.triggered.connect(self.erosionDilatation)
         self.openingClosingAction.triggered.connect(self.openingClosing)
         self.thinningThickingAction.triggered.connect(self.thinningThicking)
+        self.squelettisationAction.triggered.connect(self.squelettisation)
 
     def openFile(self):
         # Get file to load
@@ -293,6 +297,23 @@ class MainWindow(QMainWindow):
                 else:
                     strel = ImageFunctions.createThickingStrel()
                     new_image = ImageFunctions.epaississement(image, strel, max_iter)
+                self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
+
+
+    def squelettisation(self):
+        sub = self.getFocusedSubWindow()
+        if sub is not None:
+            dialog = SquelettisationDialog()
+            dialog.radio_thinning.setChecked(True)
+            result = dialog.exec_()
+            if result == QDialog.Accepted:
+                isThinning = dialog.getValues()
+                image = sub.widget().pixmap().toImage()
+                image.convertToFormat(QImage.Format_Grayscale8)
+                if isThinning:
+                    new_image = ImageFunctions.squelettisation_amincissement_homothopique(image)
+                else:
+                    new_image = ImageFunctions.squelettisation_Lantuejoul(image)
                 self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
 
 
