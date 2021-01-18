@@ -67,7 +67,7 @@ class ErosionDilatationDialog(QDialog):
         self.label.setObjectName("label")
         self.formLayout.setWidget(0, QFormLayout.LabelRole, self.label)
         self.dimension = QSpinBox(self.groupBox_2)
-        self.dimension.setMinimum(3)
+        self.dimension.setMinimum(1)
         self.dimension.setMaximum(100)
         self.dimension.setSingleStep(2)
         self.dimension.setObjectName("dimension")

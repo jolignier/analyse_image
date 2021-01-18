@@ -247,7 +247,6 @@ class MainWindow(QMainWindow):
         sub = self.getFocusedSubWindow()
         if sub is not None:
             dialog = ErosionDilatationDialog()
-            dialog.radio_boule.setEnabled(False)
             dialog.radio_carre.setChecked(True)
             dialog.radio_erosion.setChecked(True)
             result = dialog.exec_()
@@ -266,7 +265,6 @@ class MainWindow(QMainWindow):
         sub = self.getFocusedSubWindow()
         if sub is not None:
             dialog = OpeningClosingDialog()
-            dialog.radio_boule.setEnabled(False)
             dialog.radio_carre.setChecked(True)
             dialog.radio_opening.setChecked(True)
             result = dialog.exec_()
@@ -276,9 +274,9 @@ class MainWindow(QMainWindow):
                 image = sub.widget().pixmap().toImage()
                 image.convertToFormat(QImage.Format_Grayscale8)
                 if isOpening:
-                    new_image = ImageFunctions.erosion(image, strel)
+                    new_image = ImageFunctions.ouverture(image, strel)
                 else:
-                    new_image = ImageFunctions.dilatation(image, strel)
+                    new_image = ImageFunctions.fermeture(image, strel)
                 self.createMDISubWindow("Sans Titre " + str(self._subWindowCounter), QPixmap(new_image))
 
     def thinningThicking(self):
