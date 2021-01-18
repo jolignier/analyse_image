@@ -171,35 +171,35 @@ def epaississement(image, strel, max_iter) -> QImage:
 
 
 def squelettisation_Lantuejoul(image) -> QImage:
-    height, width = image.shape
+    width = image.width()
+    height = image.height()
 
-    resultat = np.zeros((height, width), dtype=np.uint8)
+    resultat = QImage(image)
+    resultat = resultat.fill(Qt.black)
 
     stop = 1
-    compteur = 0
-    degre_erosion = 0
+
+    degre_erosion = 3
     while stop != 0:
-        img1 = image.copy()
+        img1 = QImage(image)
         compteur = 0
 
         # VERIFICATION SI IMAGE NOIR (vide)
-        for degre in range(0, degre_erosion):
-            img1 = erosion(img1)
+        strel = createStrel(degre_erosion)
+        img1 = erosion(img1, strel)
 
         for i in range(0, height):
             for j in range(0, width):
-                val1 = int(img1[i, j])
-                if val1 == 255:
+                if QColor(image.pixel(i, j)).getRgb()[0] == 255:
                     compteur = compteur + 1
         stop = compteur
-        img2 = ouverture(img1)
+        img2 = ouverture(img1, strel)
 
         img3 = soustraction(img1, img2)
 
         resultat = addition(resultat, img3)
-        degre_erosion = degre_erosion + 1
-
-    # Lantuejoul Resultat_n = Resultat_n-1 + (erosion - ouverture)
+        degre_erosion += 2
+    return resultat
 
 
 def squelettisation_amincissement_homothopique(image) -> QImage:
